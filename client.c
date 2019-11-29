@@ -3,13 +3,12 @@
 #include <sys/sem.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <netdb.h>
 #include <errno.h>
 #include <unistd.h>
-
+#include "structure.h"
 
 int main(int argc, char* argv[]){
     
@@ -36,29 +35,20 @@ int main(int argc, char* argv[]){
         exit(EXIT_FAILURE);
     }
 
-    while(1){
-        char m[BUFSIZ];
-        int i = 0;
-        fgets(m, BUFSIZ, stdin);
-        printf("taille du message %ld \n", strlen(m));
-        char* t = m;
-
-        if(send(dS, t, strlen(m), 0)==-1){
-            printf("Envoi du message impossible");
-            exit(EXIT_FAILURE);
-        }  
-
-        int r;
-
-        if(recv(dS, &r, sizeof(int), 0)==-1){
-            printf("Envoi du message impossible");
-            exit(EXIT_FAILURE);
-        }
-        printf("reponse : %d\n",r);
-        while(m[i] != '\0'){
-            m[i] = '\0';
-            i++;
-        }
+    memoire p;
+    //p.listeMots = malloc(sizeof(mot)*3);
+    mot temp;
+    int i;
+    //while(1){
+    unsigned char buffer[sizeof(mot)];
+    if(recv(dS, &buffer, sizeof(buffer), 0)==-1){
+        perror("reception du message impossible");
+        exit(EXIT_FAILURE);
     }
+
+    memcpy(&temp, &buffer,sizeof(buffer));
+    printf("%s", temp.m);
+    //printf("%s", l[0].m);
+    //}
     close(dS);
 }
